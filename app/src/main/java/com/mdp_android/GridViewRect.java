@@ -202,7 +202,7 @@ public class GridViewRect extends View {
         }
     }
 
-    public void forward(){
+    public boolean forward(){
         switch (mDirection){
             case 1: //currently facing up
                 if (robotCenter[1] + 1 <= 19)
@@ -221,14 +221,10 @@ public class GridViewRect extends View {
                     robotCenter[0] += 1;
                 break;
         }
-        if (updateRobotCoords(robotCenter[0], robotCenter[1], mDirection)){
-            sendMessage("aForward");
-            MainActivity mainAct = (MainActivity) getContext();
-            mainAct.tvStatus.setText("Moving robot. Messsage: aForward");
-        }
+        return updateRobotCoords(robotCenter[0], robotCenter[1], mDirection);
     }
 
-    public void reverse(){//reverse
+    public boolean reverse(){//reverse
         boolean bUpdate = false;
         switch (mDirection){
             case 1: //currently facing up
@@ -248,14 +244,10 @@ public class GridViewRect extends View {
                     robotCenter[0] -= 1;
                 break;
         }
-        if (updateRobotCoords(robotCenter[0], robotCenter[1], mDirection)){
-            sendMessage("aReverse");
-            MainActivity mainAct = (MainActivity) getContext();
-            mainAct.tvStatus.setText("Moving robot. Message: aReverse");
-        }
+        return updateRobotCoords(robotCenter[0], robotCenter[1], mDirection);
     }
 
-    public void left(){
+    public boolean left(){
         int d = 0;
         switch (mDirection){
             case 1: //currently facing up
@@ -271,14 +263,10 @@ public class GridViewRect extends View {
                 d = 1;
                 break;
         }
-        if (updateRobotCoords(robotCenter[0], robotCenter[1], d)){
-            sendMessage("arLeft");
-            MainActivity mainAct = (MainActivity) getContext();
-            mainAct.tvStatus.setText("Moving robot. Message: arLeft");
-        }
+        return updateRobotCoords(robotCenter[0], robotCenter[1], d);
     }
 
-    public void right(){
+    public boolean right(){
         int d = 0;
         switch (mDirection){
             case 1: //currently facing up
@@ -294,11 +282,7 @@ public class GridViewRect extends View {
                 d = 2;
                 break;
         }
-        if (updateRobotCoords(robotCenter[0], robotCenter[1], d)){
-            sendMessage("arRight");
-            MainActivity mainAct = (MainActivity) getContext();
-            mainAct.tvStatus.setText("Moving robot. Message: arRight");
-        }
+        return updateRobotCoords(robotCenter[0], robotCenter[1], d);
     }
 
     private void sendMessage(String message) {

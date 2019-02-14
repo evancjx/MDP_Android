@@ -153,7 +153,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         imgBtnUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
-                arena.forward();
+                if(arena.forward()){
+                    sendMessage("aForward");
+                    tvStatus.setText("Moving robot. Messsage: aForward");
+                }
             }
         });
 
@@ -161,7 +164,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         imgBtnDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
-                arena.reverse();
+                if(arena.reverse()){
+                    sendMessage("aReverse");
+                    tvStatus.setText("Moving robot. Message: aReverse");
+                }
             }
         });
 
@@ -169,7 +175,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         imgBtnLeft.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
-                arena.left();
+                if(arena.left()){
+                    sendMessage("arLeft");
+                    tvStatus.setText("Moving robot. Message: arLeft");
+                }
             }
         });
 
@@ -177,7 +186,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         imgBtnRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
-                arena.right();    }
+                if(arena.right()){
+                    sendMessage("arRight");
+                    tvStatus.setText("Moving robot. Message: arRight");
+                }
+            }
         });
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);

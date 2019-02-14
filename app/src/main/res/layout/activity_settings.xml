@@ -38,7 +38,8 @@
             android:ems="10"
             android:inputType="text"
             android:textAlignment="center"
-            android:autofillHints="Insert Numbers" />
+            android:autofillHints="Insert Numbers"
+            tools:ignore="LabelFor" />
 
         <EditText
             android:id="@+id/tbYcoord"
