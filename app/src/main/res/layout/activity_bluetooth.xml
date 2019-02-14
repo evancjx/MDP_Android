@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".BluetoothManager">
+
+    <Button
+        android:id="@+id/btnDiscover"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/discover" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvAvailDevice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/AvailableDevices" />
+
+            <ListView
+                android:id="@+id/discoverDevices"
+                android:layout_width="250dp"
+                android:layout_height="400dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvPaired"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/Paired" />
+
+            <ListView
+                android:id="@+id/pairedDevices"
+                android:layout_width="250dp"
+                android:layout_height="400dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+
+</LinearLayout>
