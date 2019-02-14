@@ -285,11 +285,6 @@ public class GridViewRect extends View {
         return updateRobotCoords(robotCenter[0], robotCenter[1], d);
     }
 
-    private void sendMessage(String message) {
-        MainActivity mainAct = (MainActivity) getContext();
-        mainAct.sendMessage(message);
-    }
-
     public boolean updateRobotCoords(int col, int row, int direction){
         if(col < 1|| row < 1 || direction < 0){
             MainActivity mainAct = (MainActivity) getContext();
