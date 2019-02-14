@@ -106,6 +106,26 @@
             android:layout_width="138dp"
             android:layout_height="wrap_content"
             android:text="Save" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/btnShowGridHexDec"
+            android:layout_width="138dp"
+            android:layout_height="wrap_content"
+            android:text="Grid HexDec" />
+        <TextView
+            android:id="@+id/tvGridHexDec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:text="@string/showHexDec" />
     </LinearLayout>
 
 </LinearLayout>

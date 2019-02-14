@@ -14,7 +14,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class GridViewRect extends View {
-    public int[] gridArray, exploredArray;
+    public short[] gridArray, exploredArray;
     private int[] robotCenter = {-1, -1}, robotFront = {-1, -1}, waypoint = {-1, -1};
     private int mDirection = 0;
 
@@ -77,7 +77,7 @@ public class GridViewRect extends View {
             canvas.drawLine(0, r * cellHeight, NUM_COLUMNS * cellWidth, r * cellHeight, paint);
         }
 
-        int[] gArray = gridArray, eArray = exploredArray;
+        short[] gArray = gridArray, eArray = exploredArray;
 
         Bitmap tmpRobotUp = BitmapFactory.decodeResource(getResources(), R.drawable.up),
                 tmpRobotDown = BitmapFactory.decodeResource(getResources(), R.drawable.down),
@@ -319,7 +319,7 @@ public class GridViewRect extends View {
         return true;
     }
 
-    public void updateArena(int[] gridArray){
+    public void updateArena(short[] gridArray){
         this.gridArray = gridArray;
         if (((MainActivity) getContext()).bAutoUpdate)
             invalidate();

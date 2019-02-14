@@ -100,8 +100,6 @@ public class BluetoothManager extends AppCompatActivity {
             String action = intent.getAction();
             if(BluetoothDevice.ACTION_FOUND.equals(action)){
                 BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                //newDeviceAdpater.add(device.getName() + "\n" + device.getAddress());
-                //*
                 if(device.getBondState() != BluetoothDevice.BOND_BONDED){
                     newDeviceAdpater.add(device.getName() + "\n" + device.getAddress());
                 }
@@ -110,7 +108,6 @@ public class BluetoothManager extends AppCompatActivity {
                         newDeviceAdpater.add("");
                     }
                 }
-                //*/
             }
         }
     };

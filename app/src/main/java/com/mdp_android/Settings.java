@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,14 +14,16 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 public class Settings extends AppCompatActivity {
     String xCoord, yCoord, direction;
-    TextView tvSettingStatus;
+    TextView tvSettingStatus, tvGridHexDec;
     EditText tbXcoord, tbYcoord, tbDirection, tbCtm1, tbCtm2;
-    Button btnSaveSettings;
-    public GridViewRect arena;
+    Button btnSaveSettings, btnShowGridHexDec;
     public SharedPreferences settings;
     private SharedPreferences.Editor edit;
+    private String gridHexDec;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,10 +31,14 @@ public class Settings extends AppCompatActivity {
         setContentView(R.layout.activity_settings);
         getSupportActionBar().setTitle("MDP Group 1 Settings");
 
+        Bundle bundle = getIntent().getExtras();
+        gridHexDec = bundle.getString("GridHexDec");
+
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         edit = settings.edit();
 
         tvSettingStatus = findViewById(R.id.tvSettingStatus);
+        tvGridHexDec = findViewById(R.id.tvGridHexDec);
         tbXcoord = findViewById(R.id.tbXcoord);
         tbXcoord.setText(settings.getString("xCoord", "0"));
         tbYcoord = findViewById(R.id.tbYcoord);
@@ -72,6 +79,14 @@ public class Settings extends AppCompatActivity {
                 edit.apply();
                 setResult(Activity.RESULT_OK);
                 finish();
+            }
+        });
+
+        btnShowGridHexDec = findViewById(R.id.btnShowGridHexDec);
+        btnShowGridHexDec.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                tvGridHexDec.setText(gridHexDec);
             }
         });
     }

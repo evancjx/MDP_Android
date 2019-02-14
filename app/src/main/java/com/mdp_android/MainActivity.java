@@ -55,7 +55,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SharedPreferences settings = null;
     private SensorManager sensorManager = null;
 
-    private int[] grid;
+    private short[] grid;
+    private String gridHexDec;
     public boolean bAutoUpdate = false;
 
     // Message types sent from the BluetoothCommunicate Handler
@@ -243,12 +244,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        Intent serverIntent;
+        Intent settingIntent;
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            serverIntent = new Intent(this, Settings.class);
-            //startActivity(serverIntent);
-            startActivityForResult(serverIntent, 4);
+            settingIntent = new Intent(this, Settings.class);
+            //startActivity(settingIntent);
+            settingIntent.putExtra("GridHexDec", gridHexDec);
+            startActivityForResult(settingIntent, 4);
         } else if (id == R.id.action_bluetooth) openBluetoothManager();
 
         return super.onOptionsItemSelected(item);
@@ -344,9 +346,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         actionBar.setSubtitle(resId);
     }
 
-    private int[] stringHexToIntArray(String inputHex){
-        int pointer = 0;
-        int[] intArray = null;
+    private short[] stringHexToIntArray(String inputHex){
+        short pointer = 0;
+        short[] shortArray;
         String binary = "", partial, tempBin;
         while (inputHex.length() - pointer > 0){//pointer != inputHex.length()
             partial = inputHex.substring(pointer, pointer + 1); //every character in the input
@@ -356,10 +358,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             pointer++;
         }
         String[] stringArray = binary.split("");
-        intArray = new int[stringArray.length-1];//string start with a blank space \0
+        shortArray = new short[stringArray.length-1];//string start with a blank space \0
         for (int i = 0; i < stringArray.length-1; i++)
-            intArray[i] = Integer.parseInt(stringArray[i+1]);
-        return intArray;
+            shortArray[i] = Short.parseShort(stringArray[i+1]);
+        return shortArray;
     }
 
     @Override
@@ -467,6 +469,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         }
                         break;
                     case "grid":
+                        gridHexDec = jObj.getString("grid");
                         grid = stringHexToIntArray(jObj.getString("grid"));
                         Log.d("Grid", jObj.getString("grid"));
                         arena.updateArena(grid);
