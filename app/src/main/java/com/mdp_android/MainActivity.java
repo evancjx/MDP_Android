@@ -473,11 +473,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     case "robotPosition":
                         Log.d("robotPosition", jObj.getString("robotPosition"));
                         String[] rbtPos = jObj.getString("robotPosition").substring(1,jObj.getString("robotPosition").length()-1).replaceAll("\\s","").split(",");
-                        arena.updateRobotCoords(Integer.parseInt(rbtPos[0]), Integer.parseInt(rbtPos[1]), Integer.parseInt(rbtPos[2]));
+                        if(Short.parseShort(rbtPos[0]) < 2 || Short.parseShort(rbtPos[0]) > 14 ||
+                            Short.parseShort(rbtPos[1]) < 2 || Short.parseShort(rbtPos[1]) > 19 ||
+                            Short.parseShort(rbtPos[2]) < 0 || Short.parseShort(rbtPos[2]) > 4){
+                            tvStatus.setText("Error in RobotPosition");
+                        }else
+                            arena.updateRobotCoords(Integer.parseInt(rbtPos[0]), Integer.parseInt(rbtPos[1]), Integer.parseInt(rbtPos[2]));
                         break;
-                    case "arrow":
-                        String[] arrowLoc = jObj.getString("arrow").substring(1,jObj.getString("arrow").length()-1).replaceAll("\\s","").split(",");
-                        arena.updateArrow(Integer.parseInt(arrowLoc[0]), Integer.parseInt(arrowLoc[1]), Integer.parseInt(arrowLoc[2]));
+                    case "arrowPosition":
+                        String[] arrowPos = jObj.getString("arrow").substring(1,jObj.getString("arrow").length()-1).replaceAll("\\s","").split(",");
+                        if(Short.parseShort(arrowPos[0]) < 1 || Short.parseShort(arrowPos[0]) > 15 ||
+                                Short.parseShort(arrowPos[1]) < 1 || Short.parseShort(arrowPos[1]) > 20 ||
+                                Short.parseShort(arrowPos[2]) < 0 || Short.parseShort(arrowPos[2]) > 4){
+                            tvStatus.setText("Error in RobotPosition");
+                        }else
+                            arena.updateArrow(Integer.parseInt(arrowPos[0]), Integer.parseInt(arrowPos[1]), Integer.parseInt(arrowPos[2]));
                         break;
                     default:
                         Log.d("Task not done: ", objName);
