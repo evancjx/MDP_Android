@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">MDP_Android</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_config">Config</string>
     <string name="action_bluetooth">Bluetooth</string>
     <string name="bt">Bluetooth</string>
     <string name="explore">explore</string>

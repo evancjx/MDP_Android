@@ -16,7 +16,7 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 
-public class Settings extends AppCompatActivity {
+public class Config extends AppCompatActivity {
     String xCoord, yCoord, direction;
     TextView tvSettingStatus, tvGridHexDec;
     EditText tbXcoord, tbYcoord, tbDirection, tbCtm1, tbCtm2;
@@ -29,7 +29,7 @@ public class Settings extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        getSupportActionBar().setTitle("MDP Group 1 Settings");
+        getSupportActionBar().setTitle("MDP Group 1 Config");
 
         Bundle bundle = getIntent().getExtras();
         gridHexDec = bundle.getString("GridHexDec");

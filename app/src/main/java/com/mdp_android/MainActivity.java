@@ -33,10 +33,6 @@ import org.json.JSONObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import java.util.LinkedList;
-import java.util.NoSuchElementException;
-import java.util.Queue;
-
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     //Debugging
     private static final boolean debug = false;
@@ -247,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         Intent settingIntent;
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            settingIntent = new Intent(this, Settings.class);
+            settingIntent = new Intent(this, Config.class);
             //startActivity(settingIntent);
             settingIntent.putExtra("GridHexDec", gridHexDec);
             startActivityForResult(settingIntent, 4);
@@ -371,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             float y = event.values[1];
 
             if(y < -3) arena.forward();
-            else if(y >3) arena.reverse();
+            else if(y > 3) arena.reverse();
             if(x > 3) arena.left();
             else if(x < -3) arena.right();
         }
