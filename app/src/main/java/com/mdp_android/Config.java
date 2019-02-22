@@ -47,9 +47,9 @@ public class Config extends AppCompatActivity {
         tbDirection.setText(settings.getString("direction", "0"));
 
         tbWPxCoord = findViewById(R.id.tbWPxCoord);
-        tbWPxCoord.setText(settings.getString("WPxCoord", ""));
+        tbWPxCoord.setText(settings.getString("WPxCoord", "0"));
         tbWPyCoord = findViewById(R.id.tbWPyCoord);
-        tbWPyCoord.setText(settings.getString("WPxCoord", ""));
+        tbWPyCoord.setText(settings.getString("WPyCoord", "0"));
 
         tbCtm1 = findViewById(R.id.tbCtm1);
         tbCtm1.setText(settings.getString("Custom1", ""));
@@ -70,8 +70,8 @@ public class Config extends AppCompatActivity {
                     if (!(Integer.parseInt(direction) <= 4) || !(Integer.parseInt(direction) >= 1) ||
                         !(Integer.parseInt(xCoord) <= 14) || !(Integer.parseInt(xCoord) >= 1) ||
                         !(Integer.parseInt(yCoord) <= 19) || !(Integer.parseInt(yCoord) >= 1) ||
-                        !(Integer.parseInt(wpXcoord) <= 14) || !(Integer.parseInt(wpXcoord) >= 1) ||
-                        !(Integer.parseInt(wpYCoord) <= 19) || !(Integer.parseInt(wpYCoord) >= 1)){
+                        !(Integer.parseInt(wpXcoord) <= 14) || !(Integer.parseInt(wpXcoord) >= 0) ||
+                        !(Integer.parseInt(wpYCoord) <= 19) || !(Integer.parseInt(wpYCoord) >= 0)){
                         error();
                         return;
                     }

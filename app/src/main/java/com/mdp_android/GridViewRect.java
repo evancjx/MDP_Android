@@ -1,11 +1,13 @@
 package com.mdp_android;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -83,7 +85,7 @@ public class GridViewRect extends View {
                 tmpRobotDown = BitmapFactory.decodeResource(getResources(), R.drawable.down),
                 tmpRobotLeft = BitmapFactory.decodeResource(getResources(), R.drawable.left),
                 tmpRobotRight = BitmapFactory.decodeResource(getResources(), R.drawable.right),
-                tmpWaypoint = BitmapFactory.decodeResource(getResources(), R.drawable.waypoint_icon_1);
+                tmpWaypoint = BitmapFactory.decodeResource(getResources(), R.drawable.waypoint_icon);
         Up = Bitmap.createScaledBitmap(tmpRobotUp,cellWidth,cellHeight,true);
         Left = Bitmap.createScaledBitmap(tmpRobotLeft,cellWidth,cellHeight,true);
         Right = Bitmap.createScaledBitmap(tmpRobotRight,cellWidth,cellHeight,true);
@@ -351,11 +353,13 @@ public class GridViewRect extends View {
         if(event.getAction() != MotionEvent.ACTION_DOWN)
             return true;
         String message;
-        int x = 1 + (int) (event.getX()/cellWidth);
+        int x = 1 + (int)(event.getX()/cellWidth);
         int y = NUM_ROWS - (int)(event.getY() / cellHeight);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getContext());
+        SharedPreferences.Editor edit = settings.edit();
         if ((x == waypoint[0] && y == waypoint[1]) || ((x < 4 && y < 4) || (x > 12 && y > 17))){
-            waypoint[0] = -1;
-            waypoint[1] = -1;
+            waypoint[0] = 0;
+            waypoint[1] = 0;
             message = "Waypoint Coords resetted";
             ((MainActivity) getContext()).tvStatus.setText(message);
             ((MainActivity) getContext()).sendMessage(message);
@@ -366,6 +370,9 @@ public class GridViewRect extends View {
             ((MainActivity) getContext()).tvStatus.setText(message);
             ((MainActivity) getContext()).sendMessage(message);
         }
+        edit.putString("WPxCoord", Integer.toString(waypoint[0]));
+        edit.putString("WPyCoord", Integer.toString(waypoint[1]));
+        edit.apply();
         invalidate();
         return true;
     }

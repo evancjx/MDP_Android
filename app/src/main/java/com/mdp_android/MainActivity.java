@@ -500,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             arena.updateRobotCoords(Integer.parseInt(rbtPos[0]), Integer.parseInt(rbtPos[1]), Integer.parseInt(rbtPos[2]));
                         break;
                     case "arrowPosition":
-                        String[] arrowPos = jObj.getString("arrow").substring(1,jObj.getString("arrow").length()-1).replaceAll("\\s","").split(",");
+                        String[] arrowPos = jObj.getString("arrowPosition").substring(1,jObj.getString("arrowPosition").length()-1).replaceAll("\\s","").split(",");
                         if(Short.parseShort(arrowPos[0]) < 1 || Short.parseShort(arrowPos[0]) > 15 ||
                                 Short.parseShort(arrowPos[1]) < 1 || Short.parseShort(arrowPos[1]) > 20 ||
                                 Short.parseShort(arrowPos[2]) < 0 || Short.parseShort(arrowPos[2]) > 4){
