@@ -27,7 +27,7 @@ public class GridViewRect extends View {
     private Paint paint = null;
 
     private static final int NUM_COLUMNS = 15, NUM_ROWS = 20;
-    private static Bitmap Up, Left, Right, Down;
+    private static Bitmap Up, Left, Right, Down, WapPoint;
 
     private int cellWidth, cellHeight;
 
@@ -82,11 +82,13 @@ public class GridViewRect extends View {
         Bitmap tmpRobotUp = BitmapFactory.decodeResource(getResources(), R.drawable.up),
                 tmpRobotDown = BitmapFactory.decodeResource(getResources(), R.drawable.down),
                 tmpRobotLeft = BitmapFactory.decodeResource(getResources(), R.drawable.left),
-                tmpRobotRight = BitmapFactory.decodeResource(getResources(), R.drawable.right);
+                tmpRobotRight = BitmapFactory.decodeResource(getResources(), R.drawable.right),
+                tmpWaypoint = BitmapFactory.decodeResource(getResources(), R.drawable.waypoint_icon_1);
         Up = Bitmap.createScaledBitmap(tmpRobotUp,cellWidth,cellHeight,true);
         Left = Bitmap.createScaledBitmap(tmpRobotLeft,cellWidth,cellHeight,true);
         Right = Bitmap.createScaledBitmap(tmpRobotRight,cellWidth,cellHeight,true);
         Down = Bitmap.createScaledBitmap(tmpRobotDown,cellWidth,cellHeight,true);
+        WapPoint = Bitmap.createScaledBitmap(tmpWaypoint, cellWidth, cellHeight, true);
 
         //Arena with Start and Goal
         for (int i= 0; i<NUM_COLUMNS; i++){
@@ -138,7 +140,7 @@ public class GridViewRect extends View {
                 }
             }
         }
-        if (gArray != null){//TEST THIS WITH TABLET!!!
+        if (gArray != null){
             int obstacleX, obstacleY;
             for (int arrayPos = 0; arrayPos < gArray.length; arrayPos++){//pointer
                 if (arrayPos > NUM_COLUMNS * NUM_ROWS) break;
@@ -177,6 +179,11 @@ public class GridViewRect extends View {
             canvas.drawRect((waypoint[0] - 1) * cellHeight, (NUM_ROWS - waypoint[1] + 1) * cellWidth,
                     waypoint[0] * cellHeight, (NUM_ROWS - waypoint[1]) * cellWidth, paint);
         }
+
+        if (waypoint[0] >= 1 && waypoint[1] >= 1 && waypoint[0] <= NUM_COLUMNS && waypoint[1] <= NUM_ROWS ){
+            canvas.drawBitmap(WapPoint, (waypoint[0] - 1) * cellWidth, (NUM_ROWS - waypoint[1]) * cellHeight, null);
+        }
+
         //Arrow
         if(arrowX!=null) {
             Bitmap bmpArrowDirection = null;

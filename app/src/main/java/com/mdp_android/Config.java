@@ -17,9 +17,9 @@ import android.widget.Toast;
 import java.util.Arrays;
 
 public class Config extends AppCompatActivity {
-    String xCoord, yCoord, direction;
+    String xCoord, yCoord, wpXcoord, wpYCoord, direction;
     TextView tvSettingStatus, tvGridHexDec;
-    EditText tbXcoord, tbYcoord, tbDirection, tbCtm1, tbCtm2;
+    EditText tbXcoord, tbYcoord, tbDirection, tbCtm1, tbCtm2, tbWPxCoord, tbWPyCoord;
     Button btnSaveSettings, btnShowGridHexDec;
     public SharedPreferences settings;
     private SharedPreferences.Editor edit;
@@ -46,6 +46,11 @@ public class Config extends AppCompatActivity {
         tbDirection = findViewById(R.id.tbDirection);
         tbDirection.setText(settings.getString("direction", "0"));
 
+        tbWPxCoord = findViewById(R.id.tbWPxCoord);
+        tbWPxCoord.setText(settings.getString("WPxCoord", ""));
+        tbWPyCoord = findViewById(R.id.tbWPyCoord);
+        tbWPyCoord.setText(settings.getString("WPxCoord", ""));
+
         tbCtm1 = findViewById(R.id.tbCtm1);
         tbCtm1.setText(settings.getString("Custom1", ""));
         tbCtm2 = findViewById(R.id.tbCtm2);
@@ -57,12 +62,16 @@ public class Config extends AppCompatActivity {
             public void onClick (View view){
                 xCoord = tbXcoord.getText().toString();
                 yCoord = tbYcoord.getText().toString();
+                wpXcoord = tbWPxCoord.getText().toString();
+                wpYCoord = tbWPyCoord.getText().toString();
                 direction = tbDirection.getText().toString();
 
                 try{
                     if (!(Integer.parseInt(direction) <= 4) || !(Integer.parseInt(direction) >= 1) ||
                         !(Integer.parseInt(xCoord) <= 14) || !(Integer.parseInt(xCoord) >= 1) ||
-                        !(Integer.parseInt(yCoord) <= 19) || !(Integer.parseInt(yCoord) >= 1)){
+                        !(Integer.parseInt(yCoord) <= 19) || !(Integer.parseInt(yCoord) >= 1) ||
+                        !(Integer.parseInt(wpXcoord) <= 14) || !(Integer.parseInt(wpXcoord) >= 1) ||
+                        !(Integer.parseInt(wpYCoord) <= 19) || !(Integer.parseInt(wpYCoord) >= 1)){
                         error();
                         return;
                     }
@@ -73,6 +82,8 @@ public class Config extends AppCompatActivity {
 
                 edit.putString("xCoord", xCoord);
                 edit.putString("yCoord", yCoord);
+                edit.putString("WPxCoord", wpXcoord);
+                edit.putString("WPyCoord", wpYCoord);
                 edit.putString("direction", direction);
                 edit.putString("Custom1", tbCtm1.getText().toString());
                 edit.putString("Custom2", tbCtm2.getText().toString());

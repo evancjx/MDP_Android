@@ -14,6 +14,7 @@
     <string name="AvailableDevices">Available Devices</string>
     <string name="Paired">Paired</string>
     <string name="StartCoordText">Start Coord: (x, y, direction)</string>
+    <string name="WayPointText">Way Point Coord: (x,y)</string>
 
     <string name="showHexDec">Grid HexDec</string>
 

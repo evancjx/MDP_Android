@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private static final String dTag = "DEBUG";
 
     int rX = - 1, rY = -1 , rD = 1; //Start coordinates placeholder
+    int wpX = -1, wpY = -1;
 
     Button btnExplore, btnFastestP, btnRobotReset, btnResetAll, btnCtm1, btnCtm2, btnUpdateGrid;
     ImageButton imgBtnUp, imgBtnDown, imgBtnLeft, imgBtnRight;
@@ -81,6 +82,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         rY = Integer.parseInt(yCoord);
         rD = Integer.parseInt(direction);
         arena.updateRobotCoords(rX, rY, rD);
+
+        arena.updateRobotCoords(rX, rY, rD);
+        String wpXcoord = settings.getString("WPxCoord", "0");
+        String wpYcoord = settings.getString("WPyCoord", "0");
+        wpX = Integer.parseInt(wpXcoord);
+        wpY = Integer.parseInt(wpYcoord);
+        arena.updateWaypoint(wpX, wpY);
 
         mBTAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBTAdapter == null)
@@ -323,6 +331,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     rY = Integer.parseInt(yCoord);
                     rD = Integer.parseInt(direction);
                     arena.updateRobotCoords(rX, rY, rD);
+                    String wpXcoord = settings.getString("WPxCoord", "0");
+                    String wpYcoord = settings.getString("WPyCoord", "0");
+                    wpX = Integer.parseInt(wpXcoord);
+                    wpY = Integer.parseInt(wpYcoord);
+                    Log.d("Waypoint x: ",wpXcoord);
+                    Log.d("Waypoint y: ",wpYcoord);
+                    arena.updateWaypoint(wpX, wpY);
                     break;
                 default:
                     if (debug) Log.d(dTag, "Bluetooth not enabled");
@@ -442,27 +457,31 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             for (int i = 0; i < jObj.names().length(); i++) {
                 String objName = jObj.names().get(i).toString();
                 switch (objName){
-                    case "status":
-                        String status = jObj.getString("status");
-                        if (status.contains("moving forward")){
+                    case "move":
+                        String move = jObj.getString("move");
+                        if (move.contains("forward")){
                             arena.forward();
                             tvStatus.setText("Moving forward");
-                        } else if (status.contains("turning right")){
+                        } else if (move.contains("right")){
                             arena.right();
                             tvStatus.setText("Rotate right");
-                        } else if (status.contains("turning left")){
+                        } else if (move.contains("left")){
                             arena.left();
                             tvStatus.setText("Rotate left");
-                        } else if (status.contains("reversing")){
+                        } else if (move.contains("reverse")){
                             arena.reverse();
                             tvStatus.setText("Reversing");
-                        } else if (status.contains("exploring")){
+                        } else if (move.contains("explore")){
                             sendMessage("beginExplore");
                             tvStatus.setText("Start exploring");
-                        } else if (status.contains("fastest path")){
+                        } else if (move.contains("fastest")){
                             sendMessage("beginFastest");
                             tvStatus.setText("Starting fastest path");
                         }
+                        break;
+                    case "status":
+                        String status = jObj.getString("status");
+                        tvStatus.setText(status);
                         break;
                     case "grid":
                         gridHexDec = jObj.getString("grid");
