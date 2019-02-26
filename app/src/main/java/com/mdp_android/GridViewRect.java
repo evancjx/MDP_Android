@@ -16,7 +16,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class GridViewRect extends View {
-    public short[] gridArray, exploredArray;
+    public short[] obstacleArray, exploredArray;
     private int[] robotCenter = {-1, -1}, robotFront = {-1, -1}, waypoint = {-1, -1};
     private int mDirection = 0;
 
@@ -25,13 +25,19 @@ public class GridViewRect extends View {
             arrowY = new ArrayList<>(5),
             arrowDirection = new ArrayList<>(5);
 
-    private int x, x2, y, y2;
     private Paint paint = null;
 
     private static final int NUM_COLUMNS = 15, NUM_ROWS = 20;
     private static Bitmap Up, Left, Right, Down, WapPoint;
 
     private int cellWidth, cellHeight;
+
+    Bitmap tmpRobotUp = BitmapFactory.decodeResource(getResources(), R.drawable.up),
+            tmpRobotDown = BitmapFactory.decodeResource(getResources(), R.drawable.down),
+            tmpRobotLeft = BitmapFactory.decodeResource(getResources(), R.drawable.left),
+            tmpRobotRight = BitmapFactory.decodeResource(getResources(), R.drawable.right),
+            tmpWayPoint = BitmapFactory.decodeResource(getResources(), R.drawable.waypoint_icon);
+
 
     public GridViewRect (Context context){
         this(context, null);
@@ -47,6 +53,12 @@ public class GridViewRect extends View {
 
     public GridViewRect(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+
+        Up = Bitmap.createScaledBitmap(tmpRobotUp,cellWidth,cellHeight,true);
+        Left = Bitmap.createScaledBitmap(tmpRobotLeft,cellWidth,cellHeight,true);
+        Right = Bitmap.createScaledBitmap(tmpRobotRight,cellWidth,cellHeight,true);
+        Down = Bitmap.createScaledBitmap(tmpRobotDown,cellWidth,cellHeight,true);
+        WapPoint = Bitmap.createScaledBitmap(tmpWayPoint, cellWidth, cellHeight, true);
     }
 
     private void calculateCellDimesions(){
@@ -67,51 +79,72 @@ public class GridViewRect extends View {
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
 
-        canvas.drawColor(Color.WHITE);
-
-        //GRID
-        for (int c = 0; c < NUM_COLUMNS + 1; c++){
-            paint.setColor(Color.BLACK);
-            canvas.drawLine(x * cellWidth, (NUM_ROWS - 1 - y) * cellHeight,
-                    (x + 1) * cellWidth, (NUM_ROWS - y) * cellHeight, paint);
-        }
-        for (int r = 0; r < NUM_ROWS + 1; r++) {
-            canvas.drawLine(0, r * cellHeight, NUM_COLUMNS * cellWidth, r * cellHeight, paint);
-        }
-
-        short[] gArray = gridArray, eArray = exploredArray;
-
-        Bitmap tmpRobotUp = BitmapFactory.decodeResource(getResources(), R.drawable.up),
-                tmpRobotDown = BitmapFactory.decodeResource(getResources(), R.drawable.down),
-                tmpRobotLeft = BitmapFactory.decodeResource(getResources(), R.drawable.left),
-                tmpRobotRight = BitmapFactory.decodeResource(getResources(), R.drawable.right),
-                tmpWaypoint = BitmapFactory.decodeResource(getResources(), R.drawable.waypoint_icon);
-        Up = Bitmap.createScaledBitmap(tmpRobotUp,cellWidth,cellHeight,true);
-        Left = Bitmap.createScaledBitmap(tmpRobotLeft,cellWidth,cellHeight,true);
-        Right = Bitmap.createScaledBitmap(tmpRobotRight,cellWidth,cellHeight,true);
-        Down = Bitmap.createScaledBitmap(tmpRobotDown,cellWidth,cellHeight,true);
-        WapPoint = Bitmap.createScaledBitmap(tmpWaypoint, cellWidth, cellHeight, true);
+//        canvas.drawColor(Color.WHITE);
 
         //Arena with Start and Goal
-        for (int i= 0; i<NUM_COLUMNS; i++){
-            for (int j=0; j<NUM_ROWS; j++){
-                x = i; y = j;
+        for (int x= 0; x<NUM_COLUMNS; x++){
+            for (int y=0; y<NUM_ROWS; y++){
 
                 paint.setColor(Color.GRAY);
                 canvas.drawRect(x * cellWidth, (NUM_ROWS - 1 - y) * cellHeight,
                         (x + 1) * cellWidth, (NUM_ROWS - y) * cellHeight, paint);
 
-                if (i < 3 && j < 3){//Start
+                if (x < 3 && y < 3){//Start
                     paint.setColor(Color.GREEN);
-                    canvas.drawRect(x * cellWidth, (NUM_ROWS - 1 - y) * cellHeight,
-                            (x + 1) * cellWidth, (NUM_ROWS - y) * cellHeight, paint);
-                } else if (i > 11 && j> 16){//Goal
+                    canvas.drawRect(
+                            x * cellWidth, (NUM_ROWS - 1 - y) * cellHeight,
+                            (x + 1) * cellWidth, (NUM_ROWS - y) * cellHeight,
+                            paint);
+                }
+                else if (x > 11 && y > 16){//Goal
                     paint.setColor(Color.RED);
                     canvas.drawRect(x * cellWidth, (NUM_ROWS - 1 - y) * cellHeight,
                             (x + 1) * cellWidth, (NUM_ROWS - y) * cellHeight, paint);
                 }
             }
         }
+
+        // Explored
+        if (exploredArray != null){
+            int exploredX, exploredY;
+            for (int arrayPos = 0; arrayPos < exploredArray.length; arrayPos++){
+                if (arrayPos > NUM_COLUMNS * NUM_ROWS) break;
+
+                if (exploredArray[arrayPos] == 1){
+                    if (arrayPos % NUM_COLUMNS == 0){ // % 15
+                        exploredX = NUM_COLUMNS - 15;
+                        exploredY = arrayPos / NUM_COLUMNS;
+                    } else {
+                        exploredX = arrayPos % NUM_COLUMNS;
+                        exploredY = arrayPos / NUM_COLUMNS;
+                    }
+                    paint.setColor(Color.YELLOW);
+                    canvas.drawRect(exploredX * cellWidth, (exploredY + 1) * cellHeight,
+                            (exploredX + 1) * cellWidth, (exploredY) * cellHeight, paint);
+//                    if(arrayPos == 129) break;
+                }
+            }
+        }
+        if (obstacleArray != null){
+            int obstacleX, obstacleY;
+            for (int arrayPos = 0; arrayPos < obstacleArray.length; arrayPos++){//pointer
+                if (arrayPos > NUM_COLUMNS * NUM_ROWS) break;
+
+                if (obstacleArray[arrayPos] == 1){
+                    if (arrayPos % NUM_COLUMNS == 0){ // % 15
+                        obstacleX = NUM_COLUMNS - 15;
+                        obstacleY = arrayPos / NUM_COLUMNS;
+                    } else {
+                        obstacleX = arrayPos % NUM_COLUMNS;
+                        obstacleY = arrayPos / NUM_COLUMNS;
+                    }
+                    paint.setColor(Color.BLACK);
+                    canvas.drawRect(obstacleX * cellWidth, (obstacleY + 1) * cellHeight,
+                            (obstacleX + 1) * cellWidth, (obstacleY) * cellHeight, paint);
+                }
+            }
+        }
+
         //GRID
         for (int c = 0; c < NUM_COLUMNS + 1; c++){
             paint.setColor(Color.BLACK);
@@ -121,49 +154,7 @@ public class GridViewRect extends View {
             paint.setColor(Color.BLACK);
             canvas.drawLine(0, r * cellHeight, NUM_COLUMNS * cellWidth, r * cellHeight, paint);
         }
-        if (eArray != null){
-            int exploredX, exploredY;
-            for (int arrayPos = 0; arrayPos < eArray.length; arrayPos++){
-                if (arrayPos > NUM_COLUMNS * NUM_ROWS) break;
 
-                if (eArray[arrayPos] == 1){
-                    if (arrayPos % NUM_COLUMNS == 0){ // % 15
-                        exploredX = NUM_COLUMNS - 15;
-                        exploredY = arrayPos / NUM_COLUMNS;
-                    } else {
-                        exploredX = arrayPos % NUM_COLUMNS;
-                        exploredY = arrayPos / NUM_COLUMNS;
-                    }
-                    paint.setColor(Color.YELLOW);
-                    x2 = exploredX;
-                    y2 = exploredY;
-                    canvas.drawRect(x2 * cellWidth, (y2 + 1) * cellHeight,
-                            (x2 + 1) * cellWidth, (y2) * cellHeight, paint);
-                }
-            }
-        }
-        if (gArray != null){
-            int obstacleX, obstacleY;
-            for (int arrayPos = 0; arrayPos < gArray.length; arrayPos++){//pointer
-                if (arrayPos > NUM_COLUMNS * NUM_ROWS) break;
-
-                if (gArray[arrayPos] == 1){
-                    if (arrayPos % NUM_COLUMNS == 0){ // % 15
-                        obstacleX = NUM_COLUMNS - 15;
-                        obstacleY = arrayPos / NUM_COLUMNS;
-                    } else {
-                        obstacleX = arrayPos % NUM_COLUMNS;
-                        obstacleY = arrayPos / NUM_COLUMNS;
-                    }
-
-                    paint.setColor(Color.BLACK);
-                    x2 = obstacleX;
-                    y2 = obstacleY;
-                    canvas.drawRect(x2 * cellWidth, (y2 + 1) * cellHeight,
-                            (x2 + 1) * cellWidth, (y2) * cellHeight, paint);
-                }
-            }
-        }
         //ROBOT
         if (robotCenter[0] >= 0){
             paint.setColor(Color.BLUE);
@@ -328,8 +319,8 @@ public class GridViewRect extends View {
         return true;
     }
 
-    public void updateArena(short[] gridArray){
-        this.gridArray = gridArray;
+    public void updateArena(short[] obstacleArray){
+        this.obstacleArray = obstacleArray;
         if (((MainActivity) getContext()).bAutoUpdate)
             invalidate();
     }
@@ -344,6 +335,12 @@ public class GridViewRect extends View {
         arrowX.add(x);
         arrowY.add(y);
         arrowDirection.add(direction);
+        if (((MainActivity) getContext()).bAutoUpdate)
+            invalidate();
+    }
+
+    public void updateExplored(short[] exploredArray){
+        this.exploredArray = exploredArray;
         if (((MainActivity) getContext()).bAutoUpdate)
             invalidate();
     }

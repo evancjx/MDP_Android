@@ -52,8 +52,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private SharedPreferences settings = null;
     private SensorManager sensorManager = null;
 
-    private short[] grid;
-    private String gridHexDec;
+    private short[] obstacle, explored;
+    private String obstacleHex, exploredHex;
     public boolean bAutoUpdate = false;
 
     // Message types sent from the BluetoothCommunicate Handler
@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         rD = Integer.parseInt(direction);
         arena.updateRobotCoords(rX, rY, rD);
 
-        arena.updateRobotCoords(rX, rY, rD);
         String wpXcoord = settings.getString("WPxCoord", "0");
         String wpYcoord = settings.getString("WPyCoord", "0");
         wpX = Integer.parseInt(wpXcoord);
@@ -218,7 +217,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     bAutoUpdate = true;
-                    arena.updateArena(grid);
+                    arena.updateArena(obstacle);
                 }
                 else bAutoUpdate = false;
             }
@@ -228,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnUpdateGrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
-                arena.updateArena(grid);
+                arena.updateArena(obstacle);
                 arena.invalidate();
             }
         });
@@ -253,7 +252,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (id == R.id.action_settings) {
             settingIntent = new Intent(this, Config.class);
             //startActivity(settingIntent);
-            settingIntent.putExtra("GridHexDec", gridHexDec);
+            settingIntent.putExtra("GridHexDec", exploredHex);
             startActivityForResult(settingIntent, 4);
         } else if (id == R.id.action_bluetooth) openBluetoothManager();
 
@@ -357,7 +356,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         actionBar.setSubtitle(resId);
     }
 
-    private short[] stringHexToIntArray(String inputHex){
+    private short[] stringHexToIntArray(String inputHex){ // ONLY FOR AMD TOOL
         short pointer = 0;
         short[] shortArray;
         String binary = "", partial, tempBin;
@@ -373,6 +372,96 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         for (int i = 0; i < stringArray.length-1; i++)
             shortArray[i] = Short.parseShort(stringArray[i+1]);
         return shortArray;
+    }
+
+    private short[] toIntArrayReversed(String exploredHex){ // FROM ALGO
+        int pointer = 0;
+        short[] shortExploredArray;
+        String partial, tempBin;
+        StringBuilder exploredBinary = new StringBuilder();
+
+        while (exploredHex.length() - pointer > 0) {
+            partial = exploredHex.substring(pointer, pointer + 1); //every character in the input
+            tempBin = Integer.toBinaryString(Integer.parseInt(partial,16));
+            for (int i = 0; i < 4 - tempBin.length(); i++) exploredBinary = exploredBinary.append("0");
+            exploredBinary = exploredBinary.append(tempBin);
+            pointer++;
+        }
+        String exploredBin = exploredBinary.toString();
+        exploredBin = exploredBin.substring(2, exploredBin.length()-2);
+//        Log.d("exploredBinary", exploredBin);
+
+        pointer = 0;
+        StringBuilder newExploredBin = new StringBuilder();
+        while (exploredBin.length() - pointer > 0) {
+            partial = exploredBin.substring(pointer, pointer + 15);
+            newExploredBin.insert(0, partial);
+            pointer += 15;
+        }
+//        Log.d("newExploredBin", newExploredBin.toString());
+
+        String[] stringArray = newExploredBin.toString().split("");
+        shortExploredArray = new short[stringArray.length-1];//string start with a blank space \0
+        for (int i = 0; i < stringArray.length-1; i++)
+            shortExploredArray[i] = Short.parseShort(stringArray[i+1]);
+        return shortExploredArray;
+    }
+
+    private short[] toIntArrayReversed_Obstacle_FromExplored(String obstacleHex, String exploredHex){
+        int pointer = 0;
+        String partial, tempBin;
+        StringBuilder exploredBinary = new StringBuilder();
+
+        while (exploredHex.length() - pointer > 0) {
+            partial = exploredHex.substring(pointer, pointer + 1); //every character in the input
+            tempBin = Integer.toBinaryString(Integer.parseInt(partial,16));
+            for (int i = 0; i < 4 - tempBin.length(); i++) exploredBinary = exploredBinary.append("0");
+            exploredBinary = exploredBinary.append(tempBin);
+            pointer++;
+        }
+        String exploredBin = exploredBinary.toString();
+        exploredBin = exploredBin.substring(2, exploredBin.length()-2);
+//        Log.d("exploredBinary", exploredBin);
+
+        //Obstacle
+        pointer = 0;
+        short[] shortObstacleArray;
+        StringBuilder obstacleBinary = new StringBuilder();
+
+        while (obstacleHex.length() - pointer > 0) {
+            partial = obstacleHex.substring(pointer, pointer + 1); //every character in the input
+            tempBin = Integer.toBinaryString(Integer.parseInt(partial,16));
+            for (int i = 0; i < 4 - tempBin.length(); i++) obstacleBinary = obstacleBinary.append("0");
+            obstacleBinary = obstacleBinary.append(tempBin);
+            pointer++;
+        }
+        String[] exploredBinArray = exploredBin.split("");
+
+        int countZeros = 0;
+        for(int i = 1; i < exploredBinArray.length; i++){
+            if(exploredBinArray[i].equals("0")){
+                countZeros++;
+                obstacleBinary.insert(i-1, "0");
+            }
+        }
+        String obstacleBin = obstacleBinary.toString().substring(0, (obstacleBinary.length()-(countZeros%4)));
+//        Log.d("obstacleBinary", obstacleBin);
+
+        pointer = 0;
+        StringBuilder newObstacleBin = new StringBuilder();
+        while (obstacleBin.length() - pointer > 0) {
+            partial = obstacleBin.substring(pointer, pointer + 15);
+            newObstacleBin.insert(0, partial);
+            pointer += 15;
+        }
+//        Log.d("newExploredBin", newObstacleBin.toString());
+
+        String[] stringArray = newObstacleBin.toString().split("");
+        shortObstacleArray = new short[stringArray.length-1];//string start with a blank space \0
+        for (int i = 0; i < stringArray.length-1; i++)
+            shortObstacleArray[i] = Short.parseShort(stringArray[i+1]);
+
+        return shortObstacleArray;
     }
 
     @Override
@@ -484,10 +573,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         tvStatus.setText(status);
                         break;
                     case "grid":
-                        gridHexDec = jObj.getString("grid");
-                        grid = stringHexToIntArray(jObj.getString("grid"));
-                        Log.d("Grid", jObj.getString("grid"));
-                        arena.updateArena(grid);
+                        String gridHex = jObj.optString("grid");
+                        short[] gridArray = stringHexToIntArray(gridHex);
+                        arena.updateExplored(gridArray);
+                        break;
+                    case "explored":
+                        exploredHex = jObj.getString("explored");
+                        explored = toIntArrayReversed(exploredHex);
+                        arena.updateExplored(explored);
+                        break;
+                    case "obstacle":
+                        obstacleHex = jObj.getString("obstacle");
+                        obstacle = toIntArrayReversed_Obstacle_FromExplored(obstacleHex, exploredHex);
+                        arena.updateArena(obstacle);
                         break;
                     case "robotPosition":
                         Log.d("robotPosition", jObj.getString("robotPosition"));
