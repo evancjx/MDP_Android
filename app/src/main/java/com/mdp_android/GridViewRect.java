@@ -32,13 +32,6 @@ public class GridViewRect extends View {
 
     private int cellWidth, cellHeight;
 
-    Bitmap tmpRobotUp = BitmapFactory.decodeResource(getResources(), R.drawable.up),
-            tmpRobotDown = BitmapFactory.decodeResource(getResources(), R.drawable.down),
-            tmpRobotLeft = BitmapFactory.decodeResource(getResources(), R.drawable.left),
-            tmpRobotRight = BitmapFactory.decodeResource(getResources(), R.drawable.right),
-            tmpWayPoint = BitmapFactory.decodeResource(getResources(), R.drawable.waypoint_icon);
-
-
     public GridViewRect (Context context){
         this(context, null);
     }
@@ -53,12 +46,6 @@ public class GridViewRect extends View {
 
     public GridViewRect(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-
-        Up = Bitmap.createScaledBitmap(tmpRobotUp,cellWidth,cellHeight,true);
-        Left = Bitmap.createScaledBitmap(tmpRobotLeft,cellWidth,cellHeight,true);
-        Right = Bitmap.createScaledBitmap(tmpRobotRight,cellWidth,cellHeight,true);
-        Down = Bitmap.createScaledBitmap(tmpRobotDown,cellWidth,cellHeight,true);
-        WapPoint = Bitmap.createScaledBitmap(tmpWayPoint, cellWidth, cellHeight, true);
     }
 
     private void calculateCellDimesions(){
@@ -79,7 +66,16 @@ public class GridViewRect extends View {
     protected void onDraw(Canvas canvas){
         super.onDraw(canvas);
 
-//        canvas.drawColor(Color.WHITE);
+        Bitmap tmpRobotUp = BitmapFactory.decodeResource(getResources(), R.drawable.up),
+                tmpRobotDown = BitmapFactory.decodeResource(getResources(), R.drawable.down),
+                tmpRobotLeft = BitmapFactory.decodeResource(getResources(), R.drawable.left),
+                tmpRobotRight = BitmapFactory.decodeResource(getResources(), R.drawable.right),
+                tmpWayPoint = BitmapFactory.decodeResource(getResources(), R.drawable.waypoint_icon);
+        Up = Bitmap.createScaledBitmap(tmpRobotUp,cellWidth,cellHeight,true);
+        Left = Bitmap.createScaledBitmap(tmpRobotLeft,cellWidth,cellHeight,true);
+        Right = Bitmap.createScaledBitmap(tmpRobotRight,cellWidth,cellHeight,true);
+        Down = Bitmap.createScaledBitmap(tmpRobotDown,cellWidth,cellHeight,true);
+        WapPoint = Bitmap.createScaledBitmap(tmpWayPoint, cellWidth, cellHeight, true);
 
         //Arena with Start and Goal
         for (int x= 0; x<NUM_COLUMNS; x++){
@@ -118,13 +114,14 @@ public class GridViewRect extends View {
                         exploredX = arrayPos % NUM_COLUMNS;
                         exploredY = arrayPos / NUM_COLUMNS;
                     }
-                    paint.setColor(Color.YELLOW);
+                    paint.setColor(Color.WHITE);
                     canvas.drawRect(exploredX * cellWidth, (exploredY + 1) * cellHeight,
                             (exploredX + 1) * cellWidth, (exploredY) * cellHeight, paint);
 //                    if(arrayPos == 129) break;
                 }
             }
         }
+        // Obstacle
         if (obstacleArray != null){
             int obstacleX, obstacleY;
             for (int arrayPos = 0; arrayPos < obstacleArray.length; arrayPos++){//pointer
@@ -141,6 +138,23 @@ public class GridViewRect extends View {
                     paint.setColor(Color.BLACK);
                     canvas.drawRect(obstacleX * cellWidth, (obstacleY + 1) * cellHeight,
                             (obstacleX + 1) * cellWidth, (obstacleY) * cellHeight, paint);
+                }
+            }
+        }
+
+        for (int x= 0; x<NUM_COLUMNS; x++) {
+            for (int y = 0; y < NUM_ROWS; y++) {
+                if (x < 3 && y < 3) {//Start
+                    paint.setColor(Color.GREEN);
+                    canvas.drawRect(
+                            x * cellWidth, (NUM_ROWS - 1 - y) * cellHeight,
+                            (x + 1) * cellWidth, (NUM_ROWS - y) * cellHeight,
+                            paint);
+                }
+                else if (x > 11 && y > 16) {//Goal
+                    paint.setColor(Color.RED);
+                    canvas.drawRect(x * cellWidth, (NUM_ROWS - 1 - y) * cellHeight,
+                            (x + 1) * cellWidth, (NUM_ROWS - y) * cellHeight, paint);
                 }
             }
         }
@@ -173,9 +187,9 @@ public class GridViewRect extends View {
                     waypoint[0] * cellHeight, (NUM_ROWS - waypoint[1]) * cellWidth, paint);
         }
 
-        if (waypoint[0] >= 1 && waypoint[1] >= 1 && waypoint[0] <= NUM_COLUMNS && waypoint[1] <= NUM_ROWS ){
-            canvas.drawBitmap(WapPoint, (waypoint[0] - 1) * cellWidth, (NUM_ROWS - waypoint[1]) * cellHeight, null);
-        }
+//        if (waypoint[0] >= 1 && waypoint[1] >= 1 && waypoint[0] <= NUM_COLUMNS && waypoint[1] <= NUM_ROWS ){
+//            canvas.drawBitmap(WapPoint, (waypoint[0] - 1) * cellWidth, (NUM_ROWS - waypoint[1]) * cellHeight, null);
+//        }
 
         //Arrow
         if(arrowX!=null) {
@@ -325,7 +339,7 @@ public class GridViewRect extends View {
             invalidate();
     }
 
-    public void updateWaypoint(int x, int y){
+    public void updateWayPoint(int x, int y){
         this.waypoint[0] = x;
         this.waypoint[1] = y;
         invalidate();

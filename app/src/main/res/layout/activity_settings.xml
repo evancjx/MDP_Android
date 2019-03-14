@@ -78,7 +78,6 @@
             android:ems="10"
             android:inputType="text"
             android:textAlignment="center"
-            android:autofillHints="Insert Numbers"
             tools:ignore="LabelFor" />
 
         <EditText
@@ -101,7 +100,7 @@
             android:id="@+id/tvCtm1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Custom String 1" />
+            android:text="@string/custom1" />
 
         <EditText
             android:id="@+id/tbCtm1"
@@ -115,8 +114,8 @@
             android:id="@+id/tvCtm2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:text="Custom String 2" />
+            android:layout_marginStart="50dp"
+            android:text="@string/custom2" />
 
         <EditText
             android:id="@+id/tbCtm2"
@@ -137,7 +136,7 @@
             android:id="@+id/btnSaveSettings"
             android:layout_width="138dp"
             android:layout_height="wrap_content"
-            android:text="Save" />
+            android:text="@string/save" />
 
     </LinearLayout>
 
@@ -151,13 +150,32 @@
             android:id="@+id/btnShowGridHexDec"
             android:layout_width="138dp"
             android:layout_height="wrap_content"
-            android:text="Grid HexDec" />
+            android:text="@string/print" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
         <TextView
-            android:id="@+id/tvGridHexDec"
+            android:id="@+id/tvExplored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50dp"
-            android:text="@string/showHexDec" />
+            android:layout_marginStart="50dp"
+            android:text="" />
+        <TextView
+            android:id="@+id/tvObstacle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="" />
+        <TextView
+            android:id="@+id/tvArrowPositions"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="50dp"
+            android:text="" />
     </LinearLayout>
 
 </LinearLayout>

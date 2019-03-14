@@ -28,10 +28,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     //Debugging
@@ -54,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     private short[] obstacle, explored;
     private String obstacleHex, exploredHex;
-    public boolean bAutoUpdate = false;
+    public boolean bAutoUpdate = true;
 
     // Message types sent from the BluetoothCommunicate Handler
     public static final int
@@ -64,8 +68,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             MESSAGE_DEVICE_NAME = 4,
             MESSAGE_TOAST = 5;
 
+    public ArrayList<Integer>
+            arrowX = new ArrayList<>(5),
+            arrowY = new ArrayList<>(5),
+            arrowDirection = new ArrayList<>(5);
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getSupportActionBar().setTitle("MDP Group 1");
@@ -87,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         String wpYcoord = settings.getString("WPyCoord", "0");
         wpX = Integer.parseInt(wpXcoord);
         wpY = Integer.parseInt(wpYcoord);
-        arena.updateWaypoint(wpX, wpY);
+        arena.updateWayPoint(wpX, wpY);
 
         mBTAdapter = BluetoothAdapter.getDefaultAdapter();
         if (mBTAdapter == null)
@@ -97,18 +106,35 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnExplore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
-                String message = "beginExplore";
+
+                String message;
+                JSONObject exploreObj = new JSONObject();
+                try{
+                    exploreObj.put("EX_START", "OK");
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+                message = "p" + exploreObj.toString();
                 sendMessage(message);
-                tvStatus.setText("message: " + message);
+//                tvStatus.setText("message: " + message);
+                Log.d("Explore msg sent", message);
             }
         });
         btnFastestP = findViewById(R.id.btnFastest);
         btnFastestP.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
-                String message = "beginFastest";
+                String message;
+                JSONObject fastestPathObj = new JSONObject();
+                try{
+                    fastestPathObj.put("FP_START", "OK");
+                } catch (JSONException e){
+                    e.printStackTrace();
+                }
+                message = "p" + fastestPathObj.toString();
                 sendMessage(message);
-                tvStatus.setText("message: " + message);
+//                tvStatus.setText("message: " + message);
+                Log.d("FastestPath msg sent", message);
             }
         });
         btnRobotReset = findViewById(R.id.btnRobotReset);
@@ -128,7 +154,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 arena.updateRobotCoords(rX, rY, rD);
                 arena.updateArena(stringHexToIntArray(
                         "000000000000000000000000000000000000000000000000000000000000000000000000000"));
-                arena.updateWaypoint(-1,-1);
+                arena.updateWayPoint(-1,-1);
                 String message = "Reset All";
                 sendMessage(message);
                 tvStatus.setText("message: " + message);
@@ -158,8 +184,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick (View v){
                 if(arena.forward()){
-                    sendMessage("aForward");
-                    tvStatus.setText("Moving robot. Messsage: aForward");
+                    sendMessage("aF");
+                    tvStatus.setText("Moving robot. Messsage: aF");
                 }
             }
         });
@@ -169,8 +195,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick (View v){
                 if(arena.reverse()){
-                    sendMessage("aReverse");
-                    tvStatus.setText("Moving robot. Message: aReverse");
+                    sendMessage("a");
+                    tvStatus.setText("Moving robot. Message: a");
                 }
             }
         });
@@ -180,8 +206,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick (View v){
                 if(arena.left()){
-                    sendMessage("arLeft");
-                    tvStatus.setText("Moving robot. Message: arLeft");
+                    sendMessage("aL");
+                    tvStatus.setText("Moving robot. Message: aL");
                 }
             }
         });
@@ -191,8 +217,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick (View v){
                 if(arena.right()){
-                    sendMessage("arRight");
-                    tvStatus.setText("Moving robot. Message: arRight");
+                    sendMessage("aR");
+                    tvStatus.setText("Moving robot. Message: aR");
                 }
             }
         });
@@ -252,7 +278,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         if (id == R.id.action_settings) {
             settingIntent = new Intent(this, Config.class);
             //startActivity(settingIntent);
-            settingIntent.putExtra("GridHexDec", exploredHex);
+            settingIntent.putExtra("exploredHex", exploredHex);
+            settingIntent.putExtra("obstacleHex", obstacleHex);
+            settingIntent.putExtra("arrowX", arrowX);
+            settingIntent.putExtra("arrowY", arrowY);
+            settingIntent.putExtra("arrowDirection", arrowDirection);
             startActivityForResult(settingIntent, 4);
         } else if (id == R.id.action_bluetooth) openBluetoothManager();
 
@@ -309,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(dTag, "onActivityResult" + resultCode);
         if (resultCode == Activity.RESULT_OK)
             switch (requestCode){
@@ -334,9 +364,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     String wpYcoord = settings.getString("WPyCoord", "0");
                     wpX = Integer.parseInt(wpXcoord);
                     wpY = Integer.parseInt(wpYcoord);
-                    Log.d("Waypoint x: ",wpXcoord);
-                    Log.d("Waypoint y: ",wpYcoord);
-                    arena.updateWaypoint(wpX, wpY);
+                    Log.d("Waypoint x",wpXcoord);
+                    Log.d("Waypoint y",wpYcoord);
+                    arena.updateWayPoint(wpX, wpY);
+                    JSONObject jObj = new JSONObject();
+                    try{
+                        JSONArray arr = new JSONArray();
+                        arr.put(rX);
+                        arr.put(rY);
+                        arr.put(rD);
+                        jObj.put("robotPosition", arr);
+                        arr = new JSONArray();
+                        arr.put(wpX);
+                        arr.put(wpY);
+                        jObj.put("waypoint", arr);
+                    } catch (JSONException e){
+                        if (debug) Log.d(dTag, "JSON error");
+                    }
+                    System.out.println(jObj.toString());
+                    sendMessage("p"+jObj.toString()); //Send to PC(algo)
                     break;
                 default:
                     if (debug) Log.d(dTag, "Bluetooth not enabled");
@@ -389,7 +435,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         }
         String exploredBin = exploredBinary.toString();
         exploredBin = exploredBin.substring(2, exploredBin.length()-2);
-//        Log.d("exploredBinary", exploredBin);
 
         pointer = 0;
         StringBuilder newExploredBin = new StringBuilder();
@@ -398,7 +443,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             newExploredBin.insert(0, partial);
             pointer += 15;
         }
-//        Log.d("newExploredBin", newExploredBin.toString());
 
         String[] stringArray = newExploredBin.toString().split("");
         shortExploredArray = new short[stringArray.length-1];//string start with a blank space \0
@@ -546,26 +590,20 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             for (int i = 0; i < jObj.names().length(); i++) {
                 String objName = jObj.names().get(i).toString();
                 switch (objName){
-                    case "move":
-                        String move = jObj.getString("move");
-                        if (move.contains("forward")){
+                    case "movement":
+                        String move = jObj.getString("movement");
+                        if (move.contains("F")){
                             arena.forward();
                             tvStatus.setText("Moving forward");
-                        } else if (move.contains("right")){
+                        } else if (move.contains("R")){
                             arena.right();
                             tvStatus.setText("Rotate right");
-                        } else if (move.contains("left")){
+                        } else if (move.contains("L")){
                             arena.left();
                             tvStatus.setText("Rotate left");
                         } else if (move.contains("reverse")){
                             arena.reverse();
                             tvStatus.setText("Reversing");
-                        } else if (move.contains("explore")){
-                            sendMessage("beginExplore");
-                            tvStatus.setText("Start exploring");
-                        } else if (move.contains("fastest")){
-                            sendMessage("beginFastest");
-                            tvStatus.setText("Starting fastest path");
                         }
                         break;
                     case "status":
@@ -576,14 +614,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         String gridHex = jObj.optString("grid");
                         short[] gridArray = stringHexToIntArray(gridHex);
                         arena.updateExplored(gridArray);
+                        System.out.println("done");
                         break;
                     case "explored":
                         exploredHex = jObj.getString("explored");
+                        System.out.println(exploredHex);
                         explored = toIntArrayReversed(exploredHex);
                         arena.updateExplored(explored);
                         break;
                     case "obstacle":
                         obstacleHex = jObj.getString("obstacle");
+                        System.out.println(obstacleHex);
                         obstacle = toIntArrayReversed_Obstacle_FromExplored(obstacleHex, exploredHex);
                         arena.updateArena(obstacle);
                         break;
@@ -598,20 +639,42 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                             arena.updateRobotCoords(Integer.parseInt(rbtPos[0]), Integer.parseInt(rbtPos[1]), Integer.parseInt(rbtPos[2]));
                         break;
                     case "arrowPosition":
-                        String[] arrowPos = jObj.getString("arrowPosition").substring(1,jObj.getString("arrowPosition").length()-1).replaceAll("\\s","").split(",");
+//                        String[] arrowPos = jObj.getString("arrowPosition").substring(1,jObj.getString("arrowPosition").length()-1).replaceAll("\\s","").split(",");
+                        String[] arrowPos = jObj.getString("arrowPosition").replaceAll("\\s", "").split(",");
+
                         if(Short.parseShort(arrowPos[0]) < 1 || Short.parseShort(arrowPos[0]) > 15 ||
                                 Short.parseShort(arrowPos[1]) < 1 || Short.parseShort(arrowPos[1]) > 20 ||
                                 Short.parseShort(arrowPos[2]) < 0 || Short.parseShort(arrowPos[2]) > 4){
                             tvStatus.setText("Error in RobotPosition");
-                        }else
-                            arena.updateArrow(Integer.parseInt(arrowPos[0]), Integer.parseInt(arrowPos[1]), Integer.parseInt(arrowPos[2]));
+                        }else {
+                            arrowX.add(Integer.parseInt(arrowPos[0]));
+                            arrowY.add(Integer.parseInt(arrowPos[1]));
+                            arrowDirection.add(Integer.parseInt(arrowPos[2]));
+                            arena.updateArrow(Integer.parseInt(arrowPos[0]), Integer.parseInt(arrowPos[1]), getArrowDirection(Integer.parseInt(arrowPos[2])));
+                        }
                         break;
                     default:
                         Log.d("Task not done: ", objName);
                 }
             }
         } catch(Exception e){
-            Log.e("ERROR", "Message: " + e.getMessage());
+//            Log.e("ERROR", "Message: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private int getArrowDirection(int arrowDirection){
+        switch (arrowDirection){
+            case 1:
+                return 2;
+            case 2:
+                return 1;
+            case 3:
+                return 4;
+            case 4:
+                return 3;
+            default:
+                return 0;
         }
     }
 

@@ -36,6 +36,7 @@
                 android:id="@+id/btnFastest"
                 android:layout_width="140dp"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="100px"
                 android:text="@string/fastest" />
         </LinearLayout>
 
@@ -131,6 +132,7 @@
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="50dp"
+                android:checked="true"
                 android:text="Auto Update Grid" />
             <Button
                 android:id="@+id/btnUpdateGrid"
@@ -145,10 +147,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:text="Initializing Bluetooth Connection" />
-        <ListView
-            android:id="@+id/lvStatus"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"/>
+
     </LinearLayout>
 
 </LinearLayout>

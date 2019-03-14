@@ -14,16 +14,21 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Config extends AppCompatActivity {
     String xCoord, yCoord, wpXcoord, wpYCoord, direction;
-    TextView tvSettingStatus, tvGridHexDec;
+    TextView tvSettingStatus, tvExplored, tvObstacle, tvArrowPositions;
     EditText tbXcoord, tbYcoord, tbDirection, tbCtm1, tbCtm2, tbWPxCoord, tbWPyCoord;
     Button btnSaveSettings, btnShowGridHexDec;
     public SharedPreferences settings;
     private SharedPreferences.Editor edit;
-    private String gridHexDec;
+    private String exploredStringP1, obstacleStringP2;
+    public ArrayList<Integer>
+            arrowX = new ArrayList<>(5),
+            arrowY = new ArrayList<>(5),
+            arrowDirection = new ArrayList<>(5);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +37,24 @@ public class Config extends AppCompatActivity {
         getSupportActionBar().setTitle("MDP Group 1 Config");
 
         Bundle bundle = getIntent().getExtras();
-        gridHexDec = bundle.getString("GridHexDec");
+        exploredStringP1 = bundle.getString("exploredHex");
+        obstacleStringP2 = bundle.getString("obstacleHex");
+        arrowX = bundle.getIntegerArrayList("arrowX");
+        arrowY = bundle.getIntegerArrayList("arrowY");
+        arrowDirection = bundle.getIntegerArrayList("arrowDirection");
+
+        Log.d("arrowX", arrowX.toString());
+        Log.d("arrowY", arrowY.toString());
+        Log.d("arrowDirection", arrowDirection.toString());
 
         settings = PreferenceManager.getDefaultSharedPreferences(this);
         edit = settings.edit();
 
         tvSettingStatus = findViewById(R.id.tvSettingStatus);
-        tvGridHexDec = findViewById(R.id.tvGridHexDec);
+        tvExplored = findViewById(R.id.tvExplored);
+        tvObstacle = findViewById(R.id.tvObstacle);
+        tvArrowPositions = findViewById(R.id.tvArrowPositions);
+
         tbXcoord = findViewById(R.id.tbXcoord);
         tbXcoord.setText(settings.getString("xCoord", "0"));
         tbYcoord = findViewById(R.id.tbYcoord);
@@ -97,7 +113,18 @@ public class Config extends AppCompatActivity {
         btnShowGridHexDec.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tvGridHexDec.setText(gridHexDec);
+                tvExplored.setText(exploredStringP1);
+                tvObstacle.setText(obstacleStringP2);
+                String arrowPositionsString = "";
+                int arrowNum;
+                for(int i = 0; i < arrowX.size(); i++){
+                    arrowNum = 1 + i;
+                    arrowPositionsString += "Arrow " + arrowNum + ": [" +
+                        arrowX.get(i) + ", " +  arrowY.get(i) + ", " +
+                        getArrowDirection(arrowDirection.get(i)) + "] ";
+                }
+                Log.d("arrowPositionsString", arrowPositionsString);
+                tvArrowPositions.setText(arrowPositionsString);
             }
         });
     }
@@ -105,5 +132,20 @@ public class Config extends AppCompatActivity {
     private void error(){
         tvSettingStatus.setText("Invalid input!");
         Toast.makeText(getApplicationContext(), "Invalid input!", Toast.LENGTH_SHORT).show();
+    }
+
+    private String getArrowDirection(int arrowDirection){
+        switch (arrowDirection){
+            case 1:
+                return "U";
+            case 2:
+                return "D";
+            case 3:
+                return "L";
+            case 4:
+                return "R";
+            default:
+                return "Error";
+        }
     }
 }

@@ -7,8 +7,11 @@
     <string name="fastest">Fastest.P</string>
     <string name="robotreset">Rbt Reset</string>
     <string name="allreset">Reset All</string>
+    <!--Config-->
     <string name="custom1">Custom 1</string>
     <string name="custom2">Custom 2</string>
+    <string name="save">Save</string>
+    <string name="print">Print results</string>
 
     <string name="discover">Discover</string>
     <string name="AvailableDevices">Available Devices</string>
