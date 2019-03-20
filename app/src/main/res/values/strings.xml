@@ -5,6 +5,7 @@
     <string name="bt">Bluetooth</string>
     <string name="explore">explore</string>
     <string name="fastest">Fastest.P</string>
+    <string name="calibrate">F.P. Cali.</string>
     <string name="robotreset">Rbt Reset</string>
     <string name="allreset">Reset All</string>
     <!--Config-->

@@ -333,12 +333,6 @@ public class GridViewRect extends View {
         return true;
     }
 
-    public void updateArena(short[] obstacleArray){
-        this.obstacleArray = obstacleArray;
-        if (((MainActivity) getContext()).bAutoUpdate)
-            invalidate();
-    }
-
     public void updateWayPoint(int x, int y){
         this.waypoint[0] = x;
         this.waypoint[1] = y;
@@ -355,6 +349,12 @@ public class GridViewRect extends View {
 
     public void updateExplored(short[] exploredArray){
         this.exploredArray = exploredArray;
+        if (((MainActivity) getContext()).bAutoUpdate)
+            invalidate();
+    }
+
+    public void updateObstacle(short[] obstacleArray){
+        this.obstacleArray = obstacleArray;
         if (((MainActivity) getContext()).bAutoUpdate)
             invalidate();
     }

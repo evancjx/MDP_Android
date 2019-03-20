@@ -120,7 +120,7 @@ public class Config extends AppCompatActivity {
                 for(int i = 0; i < arrowX.size(); i++){
                     arrowNum = 1 + i;
                     arrowPositionsString += "Arrow " + arrowNum + ": [" +
-                        arrowX.get(i) + ", " +  arrowY.get(i) + ", " +
+                        (arrowX.get(i) - 1) + ", " +  (arrowY.get(i) - 1) + ", " +
                         getArrowDirection(arrowDirection.get(i)) + "] ";
                 }
                 Log.d("arrowPositionsString", arrowPositionsString);

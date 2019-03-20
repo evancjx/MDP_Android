@@ -35,7 +35,6 @@ import org.json.JSONObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
     //Debugging
@@ -152,7 +151,9 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             @Override
             public void onClick (View v){
                 arena.updateRobotCoords(rX, rY, rD);
-                arena.updateArena(stringHexToIntArray(
+                arena.updateExplored(stringHexToIntArray(
+                        "000000000000000000000000000000000000000000000000000000000000000000000000000"));
+                arena.updateObstacle(stringHexToIntArray(
                         "000000000000000000000000000000000000000000000000000000000000000000000000000"));
                 arena.updateWayPoint(-1,-1);
                 String message = "Reset All";
@@ -243,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     bAutoUpdate = true;
-                    arena.updateArena(obstacle);
+                    arena.updateObstacle(obstacle);
                 }
                 else bAutoUpdate = false;
             }
@@ -253,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         btnUpdateGrid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick (View v){
-                arena.updateArena(obstacle);
+                arena.updateObstacle(obstacle);
                 arena.invalidate();
             }
         });
@@ -626,7 +627,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                         obstacleHex = jObj.getString("obstacle");
                         System.out.println(obstacleHex);
                         obstacle = toIntArrayReversed_Obstacle_FromExplored(obstacleHex, exploredHex);
-                        arena.updateArena(obstacle);
+                        arena.updateObstacle(obstacle);
                         break;
                     case "robotPosition":
                         Log.d("robotPosition", jObj.getString("robotPosition"));
@@ -641,7 +642,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                     case "arrowPosition":
 //                        String[] arrowPos = jObj.getString("arrowPosition").substring(1,jObj.getString("arrowPosition").length()-1).replaceAll("\\s","").split(",");
                         String[] arrowPos = jObj.getString("arrowPosition").replaceAll("\\s", "").split(",");
-
                         if(Short.parseShort(arrowPos[0]) < 1 || Short.parseShort(arrowPos[0]) > 15 ||
                                 Short.parseShort(arrowPos[1]) < 1 || Short.parseShort(arrowPos[1]) > 20 ||
                                 Short.parseShort(arrowPos[2]) < 0 || Short.parseShort(arrowPos[2]) > 4){
