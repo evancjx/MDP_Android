@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick (View v){
                 if(arena.forward()){
                     sendMessage("aF");
-                    tvStatus.setText("Moving robot. Messsage: aF");
+                    tvStatus.setText("Moving robot: aF");
                 }
             }
         });
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick (View v){
                 if(arena.reverse()){
                     sendMessage("a");
-                    tvStatus.setText("Moving robot. Message: a");
+                    tvStatus.setText("Moving robot: a");
                 }
             }
         });
@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick (View v){
                 if(arena.left()){
                     sendMessage("aL");
-                    tvStatus.setText("Moving robot. Message: aL");
+                    tvStatus.setText("Moving robot: aL");
                 }
             }
         });
@@ -219,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             public void onClick (View v){
                 if(arena.right()){
                     sendMessage("aR");
-                    tvStatus.setText("Moving robot. Message: aR");
+                    tvStatus.setText("Moving robot: aR");
                 }
             }
         });

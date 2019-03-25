@@ -372,15 +372,17 @@ public class GridViewRect extends View {
             waypoint[0] = 0;
             waypoint[1] = 0;
             message = "Waypoint Coords resetted";
-            ((MainActivity) getContext()).tvStatus.setText(message);
-            ((MainActivity) getContext()).sendMessage(message);
         } else {
             waypoint[0] = x;
             waypoint[1] = y;
             message = "Waypoint Coords [x: " + x + " y: " + y + "]";
-            ((MainActivity) getContext()).tvStatus.setText(message);
-            ((MainActivity) getContext()).sendMessage(message);
         }
+        ((MainActivity) getContext()).tvStatus.setText(message);
+        arr = new JSONArray();
+        arr.put(waypoint[0]);
+        arr.put(waypoint[1]);
+        jObj.put("waypoint", arr);
+        ((MainActivity) getContext()).sendMessage("p"+jObj.toString());
         edit.putString("WPxCoord", Integer.toString(waypoint[0]));
         edit.putString("WPyCoord", Integer.toString(waypoint[1]));
         edit.apply();

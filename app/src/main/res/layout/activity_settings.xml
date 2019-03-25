@@ -158,21 +158,21 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-        <TextView
+        <EditText
             android:id="@+id/tvExplored"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:text="" />
-        <TextView
+        <EditText
             android:id="@+id/tvObstacle"
-            android:layout_width="wrap_content"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:text="" />
-        <TextView
+        <EditText
             android:id="@+id/tvArrowPositions"
-            android:layout_width="wrap_content"
+            android:layout_width="400dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="50dp"
             android:text="" />
